@@ -11,7 +11,7 @@ function getRandomInt(max) {
 
 app.get("/", async (req, res) => {
   let number = getRandomInt(1000);
-  const respApi = await fetch("https://xkcd.com/" + number + "/info.0.json");
+  const respApi = await fetch(`https://xkcd.com/${number}/info.0.json`);
   const resp = await respApi.json();
   res.json(resp);
 });

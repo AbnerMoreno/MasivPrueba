@@ -2,18 +2,16 @@
   <section>
     <header>
       <h1 class="logo">{{ comic?.title }}</h1>
-          <div class="clasificacion">
-            <input id="radio1" type="radio" name="estrellas" value="5"/>
-            <label for="radio1">★</label>
-            <input id="radio2" type="radio" name="estrellas" value="4">
-            <label for="radio2">★</label>
-            <input id="radio3" type="radio" name="estrellas" value="3">
-            <label for="radio3">★</label>
-            <input id="radio4" type="radio" name="estrellas" value="2">
-            <label for="radio4">★</label>
-            <input id="radio5" type="radio" name="estrellas" value="1">
-            <label for="radio5">★</label> 
-          </div>
+      <div class="clasificacion">
+        <h1 v-show="disguise">{{ rating }}</h1>
+        <vue3starRatings
+          v-model="rating"
+          controlSize="20"
+          controlBg="#ffffff"
+          starSize="20"
+          controlColor="#050505"
+        />
+      </div>
     </header>
     <div class="contenedor">
       <div class="caja">
@@ -26,16 +24,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
+import vue3starRatings from "vue3-star-ratings";
+
 const comic = ref(null);
+const rating = ref(0);
 
 onMounted(async () => {
   const response = await fetch("http://localhost:3000/");
   comic.value = await response.json();
-})
+});
+
+const disguise = computed(() => {
+  return rating.value > 0;
+});
 </script>
 
-<style scoped>
+<style>
 * {
   margin: 0;
   padding: 0;
@@ -57,44 +62,22 @@ header {
   z-index: 1000;
   letter-spacing: 10px;
   font-weight: 800;
-  
 }
 header .logo {
   position: relative;
   font-size: 20px;
   color: #111;
   text-decoration: none;
-  text-transform: uppercase; /*modifica el texto de mayuscula o miniscula*/
-  letter-spacing: 3px; /*espacio entre las letras*/
+  text-transform: uppercase;
+  letter-spacing: 3px;
   font-weight: 700;
   animation: slideLeft 0.5s ease-in-out forwards;
   cursor: pointer;
 }
-#form label {
-  font-size: 200px;
-}
-
-input[type="radio"] {
-  display: none;
-}
-
-label {
-  color: grey;
-}
-
 .clasificacion {
-  direction: rtl;
-  unicode-bidi: bidi-override;
-}
-
-label:hover,
-label:hover ~ label {
-  color: orange;
-  cursor: pointer;
-}
-
-input[type="radio"]:checked ~ label {
-  color: orange;
+  display: flex;
+  align-items: center;
+  flex-direction: column-reverse;
 }
 .contenedor {
   position: absolute;
@@ -116,7 +99,18 @@ input[type="radio"]:checked ~ label {
   overflow: hidden;
 }
 
-                /* ANIMACIONES */
+.vue3-star-ratings button {
+  margin: 0px 10px 0px 10px !important;
+}
+
+.vue3-star-ratings__wrapper {
+  display: block;
+  margin: 0 !important;
+  text-align: center;
+  padding: 0 !important;
+}
+
+/* ANIMACIONES */
 
 @keyframes slideRight {
   0% {
